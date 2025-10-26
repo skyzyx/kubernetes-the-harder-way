@@ -114,7 +114,10 @@ vmaddr=$(ip addr show enp0s1 | grep -Po 'inet \K192\.168\.42\.\d+')
 vmname=$(hostname -s)
 ```
 
-### Installing `etcd`
+### Installing `etcd` on the Control Plane nodes
+
+> [!NOTE]
+> Since `etcd` only runs on the Control Plane nodes, those are the only nodes which will have had the correct files copied to them from the earlier `scp` commands.
 
 Let's download the `etcd` binary, unpack it and copy into appropriate system directory:
 
@@ -173,8 +176,8 @@ EOF
 
 It's not worth explaining in detail *all* the options from the above file. The security related ones are a direct consequence
 of the security assumptions from the [previous chapter](04_Bootstrapping_Kubernetes_Security.md). The other ones simply
-tell the `etcd` cluster how it should initialize itself. Exhaustive reference can be found
-[here](https://etcd.io/docs/v3.5/op-guide/configuration/).
+tell the `etcd` cluster how it should initialize itself. See the [exhaustive reference](https://etcd.io/docs/v3.5/op-guide/configuration/) 
+for more information.
 
 Reload `systemd` unit definitions and start `etcd` service:
 
@@ -184,7 +187,7 @@ sudo systemctl enable etcd
 sudo systemctl start etcd
 ```
 
-Verify if the service is running:
+Verify that the service is running:
 
 ```bash
 systemctl status etcd.service
@@ -196,7 +199,7 @@ If something is wrong, you can look up logs:
 journalctl -u etcd.service
 ```
 
-You can also verify if the cluster is running properly by listing cluster memebers with the following command:
+You can also verify that the cluster is running properly by listing cluster memebers with the following command:
 
 ```bash
 sudo ETCDCTL_API=3 etcdctl member list \
@@ -214,7 +217,7 @@ bb39bdb8c49d4b1b, started, control2, https://192.168.42.13:2380, https://192.168
 dc0336cac5c58d30, started, control1, https://192.168.42.12:2380, https://192.168.42.12:2379, false
 ```
 
-### Installing `kube-apiserver`
+### Installing `kube-apiserver` on the Control Plane nodes
 
 Download the binary and copy it to `/usr/local/bin`:
 
@@ -290,7 +293,7 @@ Again, configuration options are not worth discussing in detail, but there are s
 * the `--service-node-port-range` specifies the range of ports used for 
   [`NodePort` Services](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport)
 
-Exhaustive option reference can be found [here](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/).
+See the [exhaustive option reference](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/) for more information.
 
 Enable and run it:
 
@@ -310,6 +313,12 @@ curl -v --cacert /var/lib/kubernetes/ca.pem https://127.0.0.1:6443/healthz
 > `curl` may not be installed by default. You can install it manually with `sudo apt install curl`, but you can also
 > make `cloud-init` do this automatically for you, as 
 > [described previously](02_Preparing_Environment_for_a_VM_Cluster.md#installing-apt-packages).
+
+If something is wrong, you can look up logs:
+
+```bash
+journalctl -u kube-apiserver.service -xn | less
+```
 
 ## Kubernetes API load balancer
 
