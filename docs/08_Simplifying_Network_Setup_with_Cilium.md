@@ -49,7 +49,7 @@ sudo systemctl disable kube-proxy
 Then, get rid of the old CNI plugin configurations:
 
 ```bash
-sudo rm /etc/cni/net.d/*.conf
+sudo rm -Rf /etc/cni/net.d/
 ```
 
 and restart `kubelet`:
