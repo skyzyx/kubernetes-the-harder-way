@@ -695,7 +695,7 @@ Let's do it with a script, `genenckey.sh`:
 set -xe
 dir=$(dirname "$0")
 
-key=$(head -c 32 /dev/urandom | base64)
+key=$(head -c 32 /dev/urandom | base64 -w0)
 
 cat > "$dir/encryption-config.yaml" <<EOF
 kind: EncryptionConfig
