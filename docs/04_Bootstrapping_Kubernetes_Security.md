@@ -75,6 +75,8 @@ we'll run `kubelet` and `kube-proxy` on control plane nodes, too.
 
 ### Communication channels
 
+<!-- It would help to visualize this with a chart or graph. -->
+
 Now, let's outline all the ways these components 
 [communicate](https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/) with each other.
 
