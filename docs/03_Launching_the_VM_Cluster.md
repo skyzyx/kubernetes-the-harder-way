@@ -271,6 +271,8 @@ Using `tmux`'s scriptability, we'll automate all of the above with shell scripts
 
 `vmlaunchall.sh` is the script that launches all the VMs in a `tmux` session:
 
+<!-- This did not work for me. No VMs were spun-up. -->
+
 ```bash
 #!/usr/bin/env bash
 set -xe
