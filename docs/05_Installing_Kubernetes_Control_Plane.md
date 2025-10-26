@@ -320,7 +320,7 @@ If something is wrong, you can look up logs:
 journalctl -u kube-apiserver.service -xn | less
 ```
 
-## Kubernetes API load balancer
+## Kubernetes API load balancer (gateway node)
 
 The Kubernetes API server is now running, and we can try using it. Unfortunately, this would require referring to
 one of the control node IPs/addresses directly, rather than using a single, uniform IP and name for the entire
