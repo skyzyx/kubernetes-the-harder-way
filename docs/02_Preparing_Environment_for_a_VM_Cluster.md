@@ -249,7 +249,7 @@ Let's clarify the requirements for the shared network for the VMs. We want them 
 
 So far, the entire network setup for our VMs consisted of this QEMU option:
 
-```
+```bash
 -nic vmnet-shared
 ```
 
@@ -258,7 +258,7 @@ and we let everything else to be handled automatically by macOS (DHCP, DNS).
 Let's gain some more control. First, we set the network address range and mask.
 We can do this by adding the following properties to `-nic` option:
 
-```
+```bash
 -nic vmnet-shared,start-address=192.168.42.1,end-address=192.168.42.20,subnet-mask=255.255.255.0
 ```
 
@@ -286,7 +286,7 @@ as a DNS server.
 Let's assign predictable MAC addresses to our VMs. This is as simple as adding another property
 to the `-nic` QEMU option. Assuming that `vmid` shell variable contains VM ID, it would look like this:
 
-```
+```bash
 -nic vmnet-shared,...,mac=52:52:52:00:00:0$vmid
 ```
 
@@ -304,7 +304,7 @@ Now it's time to configure `dnsmasq`'s DHCP server:
 
 This is the resulting configuration:
 
-```
+```ini
 dhcp-range=192.168.42.2,192.168.42.20,12h
 dhcp-host=52:52:52:00:00:00,192.168.42.10
 dhcp-host=52:52:52:00:00:01,192.168.42.11
@@ -317,7 +317,10 @@ dhcp-authoritative
 ```
 
 Add this to the contents of `dnsmasq` configuration file,
-which sits at `/opt/homebrew/etc/dnsmasq.conf`. Don't restart `dnsmasq` yet.
+which sits at `/opt/homebrew/etc/dnsmasq.conf`.
+
+> [!WARNING]
+> Don't restart `dnsmasq` yet.
 
 ### DNS server configuration
 
@@ -349,9 +352,9 @@ will pick it up:
 > in [another chapter](05_Installing_Kubernetes_Control_Plane.md#kubernetes-api-load-balancer), so do not bother about
 > it now. You may note how it is outside the configured DHCP IP range to reduce the risk of IP conflicts.
 
-Finally, let's put all the VMs into a _domain_. Add these lines into `dnsmasq` configuration:
+Finally, let's put all the VMs into a _domain_. Add these lines into `dnsmasq` configuration **above** the IP addresses:
 
-```
+```ini
 domain=kubenet
 expand-hosts
 ```
